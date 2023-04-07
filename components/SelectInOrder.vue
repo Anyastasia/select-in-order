@@ -23,7 +23,9 @@
             </div>
             <h1 class="game-title">{{ activeGameTitle }}</h1>
             <div class="grid-container">
-
+                <Grid v-for="(phase, index) in plantCycle" :key="index" :correctSequence="phase.sequence"
+                    :source="phase.source" :currentSequence="currentSequence" @add-sequence="addSequence"
+                    @subtract-sequence="subtractSequence" />
             </div>
         </section>
         <section id="moon-phases" class="game-section" v-if="isTopicThreeVisibile">
@@ -62,7 +64,13 @@ export default {
                 { sequence: 6, source: "https://th.bing.com/th/id/OIP.1JqQcG3Yz93qcvikjUiLPQHaHa?pid=ImgDet&rs=1" },
                 { sequence: 7, source: "https://live.staticflickr.com/3879/14757366867_102a4c3cd3.jpg" },
                 { sequence: 8, source: "https://imgc.artprintimages.com/img/print/waning-crescent-moon_u-l-pzhkty0.jpg?h=550&p=0&w=550&background=fbfbfb" },
-               
+
+            ],
+            plantCycle: [
+                { sequence: 1, source: "https://th.bing.com/th/id/OIP.NNZ0j0Po9RVSr0OXoVQV1wHaE7?w=277&h=185&c=7&r=0&o=5&pid=1.7" },
+                { sequence: 2, source: "https://live.staticflickr.com/3347/5816757734_daa9307ba7_b.jpg" },
+                { sequence: 3, source: "https://c2.staticflickr.com/2/1226/627779067_dc5049fee9_b.jpg" },
+                { sequence: 4, source: "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a9/A_sunflower.jpg/360px-A_sunflower.jpg" }
             ]
         }
     },
