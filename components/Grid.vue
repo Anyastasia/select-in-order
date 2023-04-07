@@ -22,7 +22,6 @@ export default {
     methods: {
         onClick(event) {
             this.sequence = this.currentSequence;
-            console.log(this.currentSequence, this.sequence)
             if (!this.isBadgeDisplayed) {
                 this.$emit('add-sequence', event.target);
             }

@@ -88,11 +88,13 @@ export default {
                 this.isTopicOneVisibile = false;
                 this.isTopicTwoVisibile = true
                 this.isTopicThreeVisibile = false
+                this.plantCycle = this.shuffle(this.plantCycle)
             }
             else if (gameTitle === 'Moon Phases') {
                 this.isTopicOneVisibile = false;
                 this.isTopicTwoVisibile = false
                 this.isTopicThreeVisibile = true
+                this.moonPhase = this.shuffle(this.moonPhase);
             }
         },
         quitGame() {
@@ -114,6 +116,13 @@ export default {
             this.sequenceStack = this.sequenceStack.filter(grid => grid !== closestGrid);
             this.currentSequence -= 1;
             console.log(this.sequenceStack);
+        },
+        shuffle(a) {
+            for (let i = a.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [a[i], a[j]] = [a[j], a[i]];
+            }
+            return a;
         }
     },
     watch: {
