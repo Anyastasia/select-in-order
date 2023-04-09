@@ -19,7 +19,7 @@
             <div class="game-details">
                 <h1 @click="quitGame">
                     &lt; Back</h1>
-                <h1>Timer: 30</h1>
+                <h1>Timer: {{ timerCount }}</h1>
             </div>
             <h1 class="game-title">{{ activeGameTitle }}</h1>
             <div class="grid-container">
@@ -32,7 +32,7 @@
             <div class="game-details">
                 <h1 @click="quitGame">
                     &lt; Back</h1>
-                <h1>Timer: 30</h1>
+                <h1>Timer: {{ timerCount }}</h1>
             </div>
             <h1 class="game-title">{{ activeGameTitle }}</h1>
             <div class="grid-container">
@@ -54,6 +54,10 @@ export default {
             isTopicThreeVisibile: false,
             currentSequence: 1,
             sequenceStack: [],
+            gridCount: 0,
+            isCorrectSequence: true,
+            timerCount: 30,
+            timeInterval: null,
             activeGameTitle: "",
             moonPhase: [
                 { sequence: 1, source: "https://www.astro-seek.com/seek-images/fb/seek_fb_moon_new_1200.jpg" },
@@ -96,6 +100,16 @@ export default {
                 this.isTopicThreeVisibile = true
                 this.moonPhase = this.shuffle(this.moonPhase);
             }
+
+            this.timeInterval = setInterval(() => {
+                this.timerCount--;
+                console.log(this.timerCount)
+
+                if(this.timerCount === 0){
+                    alert('ran out of time!');
+                    clearInterval(this.timeInterval);
+                }
+            }, 1000);
         },
         quitGame() {
             this.isMenuVisible = true;
@@ -104,6 +118,10 @@ export default {
             this.isTopicThreeVisibile = false
             this.currentSequence = 1;
             this.sequenceStack = []
+            this.isCorrectSequence = true
+            clearInterval(this.timeInterval);
+            this.timeInterval = null;
+            this.timerCount = 30;
         },
         addSequence(element) {
             const closestGrid = element.closest(".grid");
@@ -129,11 +147,31 @@ export default {
         currentSequence(newValue, prevValue) {
             let sequenceCount = 1;
             this.sequenceStack.forEach(grid => {
+                this.isCorrectSequence = true;
                 const badge = grid.children[0];
                 const badgeText = badge.children[0];
                 badgeText.textContent = sequenceCount;
+
+                //check if sequence is still correct
+                if (grid.id != badgeText.textContent) this.isCorrectSequence = false;
+
                 sequenceCount++;
+                console.log(this.isCorrectSequence)
             });
+        }
+    },
+    updated() {
+        if (!this.isMenuVisible) {
+            this.gridCount = document.querySelector(".grid-container").children.length;
+        }
+
+        if (this.gridCount === this.sequenceStack.length) {
+            if (this.isCorrectSequence) {
+                alert('the sequence is right mlem');
+            }
+            else {
+                alert('bro are you that dumb?')
+            }
         }
     }
 }
@@ -224,13 +262,6 @@ html {
 }
 
 .grid-container {
-    /* display: grid;
-    grid-template-columns: repeat(4, 200px);
-    grid-auto-rows: auto;
-    row-gap: 50px;
-    column-gap: 50px;
-    justify-content: center;
-    align-items: center; */
     width: 60vw;
     height: 60vh;
     display: flex;
