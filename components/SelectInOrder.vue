@@ -1,5 +1,9 @@
 <template>
     <div>
+        <Modal ref="gameOverModal" theme="error" message="Game Over"/>
+        <Modal ref="timeOutModal" theme="error" message="Ran out of time!"/>
+        <Modal ref="successModal" theme="success" message="Noice"/> 
+
         <section id="topic-menu" v-if="isMenuVisible">
             <h1>Select - in - Order</h1>
             <div class="topic-options-container">
@@ -158,7 +162,8 @@ export default {
                 // console.log(this.timerCount)
 
                 if (this.timerCount === 0) {
-                    alert('ran out of time!');
+                    // alert('ran out of time!');
+                    this.$refs.timeOutModal.$el.showModal()
                     clearInterval(this.timeInterval);
                 }
             }, 1000);
@@ -169,7 +174,7 @@ export default {
         },
         resetTimer() {
             this.timerCount = 30;
-        }
+        },
     },
     watch: {
         currentSequence(newValue, prevValue) {
@@ -200,21 +205,23 @@ export default {
         if (this.gridCount === this.sequenceStack.length) {
 
             if (this.isCorrectSequence) {
-                alert('the sequence is right mlem');
+                // alert('the sequence is right mlem');
+                this.$refs.successModal.$el.showModal()
                 this.clearTimer()
             }
             else {
                 this.currentLife--;
                 console.log(this.currentLife)
                 if (this.currentLife === 0) {
-                    alert('bro are you that dumb?')
+                    // alert('bro are you that dumb?')
+                    this.$refs.gameOverModal.$el.showModal()
                     this.clearTimer()
                 }
                 this.sequenceStack[this.sequenceStack.length - 1].click()
                 // this.sequenceStack.pop()
             }
         }
-    }
+    },
 }
 </script>
   
