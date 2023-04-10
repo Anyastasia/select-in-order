@@ -19,6 +19,14 @@
             <div class="game-details">
                 <h1 @click="quitGame">
                     &lt; Back</h1>
+                <div class="life-container">
+                    <i v-if="currentLife >= 1" class="bi bi-heart-fill"></i>
+                    <i v-else class="bi bi-heartbreak"></i>
+                    <i v-if="currentLife >= 2" class="bi bi-heart-fill"></i>
+                    <i v-else class="bi bi-heartbreak"></i>
+                    <i v-if="currentLife === 3" class="bi bi-heart-fill"></i>
+                    <i v-else class="bi bi-heartbreak"></i>
+                </div>
                 <h1>Timer: {{ timerCount }}</h1>
             </div>
             <h1 class="game-title">{{ activeGameTitle }}</h1>
@@ -32,6 +40,14 @@
             <div class="game-details">
                 <h1 @click="quitGame">
                     &lt; Back</h1>
+                <div class="life-container">
+                    <i v-if="currentLife >= 1" class="bi bi-heart-fill"></i>
+                    <i v-else class="bi bi-heartbreak"></i>
+                    <i v-if="currentLife >= 2" class="bi bi-heart-fill"></i>
+                    <i v-else class="bi bi-heartbreak"></i>
+                    <i v-if="currentLife === 3" class="bi bi-heart-fill"></i>
+                    <i v-else class="bi bi-heartbreak"></i>
+                </div>
                 <h1>Timer: {{ timerCount }}</h1>
             </div>
             <h1 class="game-title">{{ activeGameTitle }}</h1>
@@ -52,8 +68,10 @@ export default {
             isTopicOneVisibile: false,
             isTopicTwoVisibile: false,
             isTopicThreeVisibile: false,
+            currentLife: 3,
             currentSequence: 1,
             sequenceStack: [],
+            userSequence: [],
             gridCount: 0,
             isCorrectSequence: true,
             timerCount: 30,
@@ -80,7 +98,6 @@ export default {
     },
     methods: {
         selectGame(gameTitle) {
-            console.log("hello")
             this.isMenuVisible = false;
             this.activeGameTitle = gameTitle;
             if (gameTitle === 'Four Seasons') {
@@ -101,15 +118,7 @@ export default {
                 this.moonPhase = this.shuffle(this.moonPhase);
             }
 
-            this.timeInterval = setInterval(() => {
-                this.timerCount--;
-                console.log(this.timerCount)
-
-                if(this.timerCount === 0){
-                    alert('ran out of time!');
-                    clearInterval(this.timeInterval);
-                }
-            }, 1000);
+            this.startInterval();
         },
         quitGame() {
             this.isMenuVisible = true;
@@ -119,21 +128,22 @@ export default {
             this.currentSequence = 1;
             this.sequenceStack = []
             this.isCorrectSequence = true
-            clearInterval(this.timeInterval);
-            this.timeInterval = null;
-            this.timerCount = 30;
+            this.clearTimer()
+            this.resetTimer()
+            this.currentLife = 3
+            this.userSequence = []
         },
         addSequence(element) {
             const closestGrid = element.closest(".grid");
             this.sequenceStack.push(closestGrid);
             this.currentSequence += 1;
-            console.log(this.sequenceStack);
+            // console.log(this.sequenceStack);
         },
         subtractSequence(element) {
             const closestGrid = element.closest(".grid");
             this.sequenceStack = this.sequenceStack.filter(grid => grid !== closestGrid);
             this.currentSequence -= 1;
-            console.log(this.sequenceStack);
+            // console.log(this.sequenceStack);
         },
         shuffle(a) {
             for (let i = a.length - 1; i > 0; i--) {
@@ -141,24 +151,46 @@ export default {
                 [a[i], a[j]] = [a[j], a[i]];
             }
             return a;
+        },
+        startInterval() {
+            this.timeInterval = setInterval(() => {
+                this.timerCount--;
+                // console.log(this.timerCount)
+
+                if (this.timerCount === 0) {
+                    alert('ran out of time!');
+                    clearInterval(this.timeInterval);
+                }
+            }, 1000);
+        },
+        clearTimer() {
+            clearInterval(this.timeInterval);
+            this.timeInterval = null;
+        },
+        resetTimer() {
+            this.timerCount = 30;
         }
     },
     watch: {
         currentSequence(newValue, prevValue) {
             let sequenceCount = 1;
             this.sequenceStack.forEach(grid => {
-                this.isCorrectSequence = true;
+                // this.isCorrectSequence = true;
                 const badge = grid.children[0];
                 const badgeText = badge.children[0];
                 badgeText.textContent = sequenceCount;
 
                 //check if sequence is still correct
-                if (grid.id != badgeText.textContent) this.isCorrectSequence = false;
+                if (grid.id != badgeText.textContent) this.userSequence.push(false);
+                else this.userSequence.push(true);
+                this.isCorrectSequence = this.userSequence.every((currentValue) => currentValue)
 
                 sequenceCount++;
-                console.log(this.isCorrectSequence)
+                // console.log(this.isCorrectSequence)
+                // console.log(this.userSequence)
             });
-        }
+            this.userSequence = []
+        },
     },
     updated() {
         if (!this.isMenuVisible) {
@@ -166,11 +198,20 @@ export default {
         }
 
         if (this.gridCount === this.sequenceStack.length) {
+
             if (this.isCorrectSequence) {
                 alert('the sequence is right mlem');
+                this.clearTimer()
             }
             else {
-                alert('bro are you that dumb?')
+                this.currentLife--;
+                console.log(this.currentLife)
+                if (this.currentLife === 0) {
+                    alert('bro are you that dumb?')
+                    this.clearTimer()
+                }
+                this.sequenceStack[this.sequenceStack.length - 1].click()
+                // this.sequenceStack.pop()
             }
         }
     }
@@ -179,6 +220,7 @@ export default {
   
 <style scoped>
 @import url('https://fonts.googleapis.com/css2?family=Changa+One&display=swap');
+@import url("https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.4/font/bootstrap-icons.css");
 
 html {
     margin: 0;
@@ -248,6 +290,25 @@ html {
 
 .game-details h1:first-of-type:hover {
     transform: scale(1.1);
+}
+
+.life-container {
+    height: 100%;
+    width: 200px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+    align-items: center;
+    /* background: rgba(236, 203, 17, 0.507);
+    box-shadow: 0px 0px 4px 12px rgba(0, 0, 0, 0.048);
+    border-radius: 20px; */
+}
+
+.life-container i {
+    font-size: 45px;
+    color: #ee4116;
+    /* text-shadow: #3a3e47; */
+    filter: drop-shadow(0 0 0.4rem crimson);
 }
 
 .game-title {
