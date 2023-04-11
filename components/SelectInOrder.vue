@@ -1,8 +1,8 @@
 <template>
     <div>
-        <Modal ref="gameOverModal" theme="error" message="Game Over"/>
-        <Modal ref="timeOutModal" theme="error" message="Ran out of time!"/>
-        <Modal ref="successModal" theme="success" message="Noice"/> 
+        <Modal ref="gameOverModal" theme="error" message="Game Over" @quit="quitGame" @restart="restartGame"/>
+        <Modal ref="timeOutModal" theme="error" message="Ran out of time!" @quit="quitGame" @restart="restartGame"/>
+        <Modal ref="successModal" theme="success" message="Noice" @quit="quitGame" @restart="restartGame"/> 
 
         <section id="topic-menu" v-if="isMenuVisible">
             <h1>Select - in - Order</h1>
@@ -136,6 +136,16 @@ export default {
             this.resetTimer()
             this.currentLife = 3
             this.userSequence = []
+        },
+        restartGame() {
+            this.sequenceStack.forEach(value => value.click())
+            this.sequenceStack = []
+            this.isCorrectSequence = true
+            this.clearTimer()
+            this.resetTimer()
+            this.currentLife = 3
+            this.userSequence = []
+            this.startInterval();
         },
         addSequence(element) {
             const closestGrid = element.closest(".grid");
