@@ -71,7 +71,7 @@ export default {
     align-items: center;
 }
 
-.badge h1{
+.badge h1 {
     font-family: 'Changa One';
     font-size: 2rem;
     color: white;
@@ -93,5 +93,50 @@ export default {
 .image-container img {
     width: 100%;
     height: 100%;
+}
+
+@media only screen and (max-width: 1440px) {
+    .grid {
+        width: 190px;
+        height: 190px;
+    }
+}
+
+@media only screen and (max-width: 1024px) {
+    .grid {
+        width: 170px;
+        height: 170px;
+        border-radius: 25px;
+    }
+
+    .image-container {
+        border-radius: 25px;
+    }
+}
+
+@media only screen and (max-width: 768px) {
+    .grid {
+        width: 120px;
+        height: 120px;
+        border-radius: 25px;
+    }
+
+    .image-container {
+        border-radius: 25px;
+    }
+}
+
+@media only screen and (max-width: 425px) {
+    .grid {
+        width: 110px;
+        height: 110px;
+    }
+}
+
+@media only screen and (max-width: 375px) {
+    .grid {
+        width: 100px;
+        height: 100px;
+    }
 }
 </style>

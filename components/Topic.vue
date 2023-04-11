@@ -78,4 +78,49 @@ export default {
     text-shadow: 0px 4px 4px #000000;
     margin: 0px;
 }
+
+@media only screen and (max-width: 1440px) {
+    .topic-container {
+        width: 300px;
+        height: 230px;
+        border-radius: 25px;
+    }
+
+    .topic-image {
+        border-radius: 25px;
+    }
+
+    .button {
+        width: 300px;
+        height: 83px;
+    }
+
+    .button h1 {
+        font-size: 38px;
+    }
+}
+
+@media only screen and (max-width: 768px) {
+    .topic-container {
+        width: 250px;
+        height: 170px;
+        border-radius: 15px;
+        margin-bottom: 15px;
+    }
+
+    .topic-image {
+        border-radius: 15px;
+    }
+
+    .button {
+        width: 250px;
+        height: 53px;
+        border-radius: 15px;
+        margin-bottom: 20px;
+    }
+
+    .button h1 {
+        font-size: 28px;
+    }
+}
 </style>
