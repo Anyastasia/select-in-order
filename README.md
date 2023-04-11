@@ -6,10 +6,10 @@
 ```
 
 **Desktop:**
-![DEKSTOP](.\static\images\markdown\menu.png)
+![DEKSTOP](./static/images/markdown/menu.png)
 
 **Mobile:**
-![DEKSTOP](.\static\images\markdown\menu-mobile.png)
+![DEKSTOP](./static/images/markdown/menu-mobile.png)
 
 ## Adding custom sequence topic
 
@@ -40,7 +40,7 @@ export default {
 
 
 **Output:**
-![DEKSTOP](.\static\images\markdown\menu-custom.png)
+![DEKSTOP](./static/images/markdown/menu-custom.png)
 
 As you can see, a new topic has been added to the options menu. By default, it has its own default topic `thumbnail` and topic `title` if not provided in the reusable component.
 
@@ -53,7 +53,7 @@ You can pass your desired `title` inside the title prop to change the title of y
 
 **Output:**
 
-![DEKSTOP](.\static\images\markdown\title.png)
+![DEKSTOP](./static/images/markdown/title.png)
 
 ## Setting up thumbnail
 
@@ -65,7 +65,7 @@ If you want to change the thumbnail of your topic, simply pass an image source i
 
 **Output:**
 
-![DEKSTOP](.\static\images\markdown\thumbnail.png)
+![DEKSTOP](./static/images/markdown/thumbnail.png)
 
 ## Removing default topics
 
@@ -76,4 +76,4 @@ If you only want your custom topic to be shown in the options menu, you can add 
 ```
 **Output:**
 
-![DEKSTOP](.\static\images\markdown\hide-options.png)
+![DEKSTOP](./static/images/markdown/hide-options.png)
