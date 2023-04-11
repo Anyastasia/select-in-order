@@ -1,69 +1,79 @@
 # select-in-order
 
-## Build Setup
-
-```bash
-# install dependencies
-$ npm install
-
-# serve with hot reload at localhost:3000
-$ npm run dev
-
-# build for production and launch server
-$ npm run build
-$ npm run start
-
-# generate static project
-$ npm run generate
+## Reusable component
+```vue
+<select-in-order />
 ```
 
-For detailed explanation on how things work, check out the [documentation](https://nuxtjs.org).
+**Desktop:**
+![DEKSTOP](static\images\markdown\menu.png)
 
-## Special Directories
+**Mobile:**
+![DEKSTOP](static\images\markdown\menu-mobile.png)
 
-You can create the following extra directories, some of which have special behaviors. Only `pages` is required; you can delete them if you don't want to use their functionality.
+## Adding custom sequence topic
 
-### `assets`
+If you want to add your own sequence game, create an array containing image sources (URLs). The order of the image sources provided will be the basis for the correct order/sequence in the game.
 
-The assets directory contains your uncompiled assets such as Stylus or Sass files, images, or fonts.
+```vue
+<template>
+  <select-in-order :sequence="testSequence"/>
+</template>
 
-More information about the usage of this directory in [the documentation](https://nuxtjs.org/docs/2.x/directory-structure/assets).
+<script>
+export default {
+  data() {
+    return {
+      testSequence: [
+        "https://www.astro-seek.com/seek-images/fb/seek_fb_moon_new_1200.jpg",
+        "https://i.redd.it/8o9j69nh19a11.jpg",
+        "https://images.fineartamerica.com/images-medium-large-5/first-quarter-moon-nasas-scientific-visualization-studioscience-photo-library.jpg",
+        "https://live.staticflickr.com/3874/19223685325_0b9a3b0ab9.jpg",
+        "https://live.staticflickr.com/3874/19223685325_0b9a3b0ab9.jpg",
+      ]
+    }
+  }
+}
+</script>
+```
+**_NOTE:_**  If the number of image sources in the provided array is less than 2 or more than 8, your custom topic will not be rendered.
 
-### `components`
 
-The components directory contains your Vue.js components. Components make up the different parts of your page and can be reused and imported into your pages, layouts and even other components.
+**Output:**
+![DEKSTOP](static\images\markdown\menu-custom.png)
 
-More information about the usage of this directory in [the documentation](https://nuxtjs.org/docs/2.x/directory-structure/components).
+As you can see, a new topic has been added to the options menu. By default, it has its own default topic `thumbnail` and topic `title` if not provided in the reusable component.
 
-### `layouts`
+## Setting up title
+You can pass your desired `title` inside the title prop to change the title of your custom topic:
 
-Layouts are a great help when you want to change the look and feel of your Nuxt app, whether you want to include a sidebar or have distinct layouts for mobile and desktop.
+```vue
+<select-in-order :sequence="testSequence" title="Sample topic"/>
+```
 
-More information about the usage of this directory in [the documentation](https://nuxtjs.org/docs/2.x/directory-structure/layouts).
+**Output:**
 
+![DEKSTOP](static\images\markdown\title.png)
 
-### `pages`
+## Setting up thumbnail
 
-This directory contains your application views and routes. Nuxt will read all the `*.vue` files inside this directory and setup Vue Router automatically.
+If you want to change the thumbnail of your topic, simply pass an image source in the `thumbnail` prop:
 
-More information about the usage of this directory in [the documentation](https://nuxtjs.org/docs/2.x/get-started/routing).
+```vue
+<select-in-order ... thumbnail="\images\markdown\evolution.jpg"/>
+```
 
-### `plugins`
+**Output:**
 
-The plugins directory contains JavaScript plugins that you want to run before instantiating the root Vue.js Application. This is the place to add Vue plugins and to inject functions or constants. Every time you need to use `Vue.use()`, you should create a file in `plugins/` and add its path to plugins in `nuxt.config.js`.
+![DEKSTOP](static\images\markdown\thumbnail.png)
 
-More information about the usage of this directory in [the documentation](https://nuxtjs.org/docs/2.x/directory-structure/plugins).
+## Removing default topics
 
-### `static`
+If you only want your custom topic to be shown in the options menu, you can add the `hide-options` attribute to the component:
 
-This directory contains your static files. Each file inside this directory is mapped to `/`.
+```vue
+<select-in-order ... hide-options/>
+```
+**Output:**
 
-Example: `/static/robots.txt` is mapped as `/robots.txt`.
-
-More information about the usage of this directory in [the documentation](https://nuxtjs.org/docs/2.x/directory-structure/static).
-
-### `store`
-
-This directory contains your Vuex store files. Creating a file in this directory automatically activates Vuex.
-
-More information about the usage of this directory in [the documentation](https://nuxtjs.org/docs/2.x/directory-structure/store).
+![DEKSTOP](static\images\markdown\hide-options.png)

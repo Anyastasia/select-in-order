@@ -1,19 +1,40 @@
 <template>
     <div>
+        <Modal ref="gameOverModal" theme="error" message="Game Over" @quit="quitGame" @restart="restartGame" />
+        <Modal ref="timeOutModal" theme="error" message="Ran out of time!" @quit="quitGame" @restart="restartGame" />
+        <Modal ref="successModal" theme="success" message="Noice" @quit="quitGame" @restart="restartGame" />
+
         <section id="topic-menu" v-if="isMenuVisible">
             <h1>Select - in - Order</h1>
             <div class="topic-options-container">
-                <!-- <Topic source="https://i.pinimg.com/736x/a8/35/99/a8359975e7d8374921dc5433af815a8c.jpg" title="Four Seasons"
-                    @on-select="selectGame" /> -->
+                <Topic :source="thumbnail" :title="title" @on-select="selectGame" v-if="isValidSequence" />
                 <Topic source="https://www.bing.com/images/blob?bcid=S9-eaSqt5HAFvw" title="Plant Cycle"
-                    @on-select="selectGame" />
+                    @on-select="selectGame" v-if="!hideOptions" />
                 <Topic
                     source="https://static.vecteezy.com/system/resources/previews/000/212/370/non_2x/moon-phase-vectors.png"
-                    title="Moon Phases" @on-select="selectGame" />
+                    title="Moon Phases" @on-select="selectGame" v-if="!hideOptions" />
             </div>
         </section>
-        <section id="four-seasons" class="game-section" v-if="isTopicOneVisibile">
-            <h1>Four season</h1>
+        <section id="custom-game" class="game-section" v-if="isTopicOneVisibile">
+            <div class="game-details">
+                <h1 @click="quitGame">
+                    &lt; Back</h1>
+                <div class="life-container">
+                    <i v-if="currentLife >= 1" class="bi bi-heart-fill"></i>
+                    <i v-else class="bi bi-heartbreak"></i>
+                    <i v-if="currentLife >= 2" class="bi bi-heart-fill"></i>
+                    <i v-else class="bi bi-heartbreak"></i>
+                    <i v-if="currentLife === 3" class="bi bi-heart-fill"></i>
+                    <i v-else class="bi bi-heartbreak"></i>
+                </div>
+                <h1>Timer: {{ timerCount }}</h1>
+            </div>
+            <h1 class="game-title">{{ activeGameTitle }}</h1>
+            <div class="grid-container">
+                <Grid v-for="(phase, index) in newPropSequence" :key="index" :correctSequence="phase.sequence"
+                    :source="phase.source" :currentSequence="currentSequence" @add-sequence="addSequence"
+                    @subtract-sequence="subtractSequence" />
+            </div>
         </section>
         <section id="plant-cycle" class="game-section" v-if="isTopicTwoVisibile">
             <div class="game-details">
@@ -62,12 +83,34 @@
   
 <script>
 export default {
+    props: {
+        thumbnail: {
+            type: String,
+            default(rawProps) {
+                return "https://i.pinimg.com/736x/a8/35/99/a8359975e7d8374921dc5433af815a8c.jpg"
+            }
+        },
+        title: {
+            type: String,
+            default(rawProps) {
+                return "Custom game"
+            }
+        },
+        sequence: {
+            type: Array,
+            default(rawProps) {
+                return [];
+            },
+        },
+        hideOptions: Boolean
+    },
     data() {
         return {
             isMenuVisible: true,
             isTopicOneVisibile: false,
             isTopicTwoVisibile: false,
             isTopicThreeVisibile: false,
+            newPropSequence: [],
             currentLife: 3,
             currentSequence: 1,
             sequenceStack: [],
@@ -100,10 +143,11 @@ export default {
         selectGame(gameTitle) {
             this.isMenuVisible = false;
             this.activeGameTitle = gameTitle;
-            if (gameTitle === 'Four Seasons') {
+            if (gameTitle === this.title) {
                 this.isTopicOneVisibile = true;
                 this.isTopicTwoVisibile = false
                 this.isTopicThreeVisibile = false
+                this.newPropSequence = this.shuffle(this.newPropSequence)
             }
             else if (gameTitle === 'Plant Cycle') {
                 this.isTopicOneVisibile = false;
@@ -133,6 +177,16 @@ export default {
             this.currentLife = 3
             this.userSequence = []
         },
+        restartGame() {
+            this.sequenceStack.forEach(value => value.click())
+            this.sequenceStack = []
+            this.isCorrectSequence = true
+            this.clearTimer()
+            this.resetTimer()
+            this.currentLife = 3
+            this.userSequence = []
+            this.startInterval();
+        },
         addSequence(element) {
             const closestGrid = element.closest(".grid");
             this.sequenceStack.push(closestGrid);
@@ -158,7 +212,8 @@ export default {
                 // console.log(this.timerCount)
 
                 if (this.timerCount === 0) {
-                    alert('ran out of time!');
+                    // alert('ran out of time!');
+                    this.$refs.timeOutModal.$el.showModal()
                     clearInterval(this.timeInterval);
                 }
             }, 1000);
@@ -169,6 +224,12 @@ export default {
         },
         resetTimer() {
             this.timerCount = 30;
+        },
+        generateValidSequence() {
+            this.newPropSequence = this.sequence.map((source, index) => {
+                return { sequence: index + 1, source }
+            })
+            console.log(this.newPropSequence)
         }
     },
     watch: {
@@ -195,24 +256,37 @@ export default {
     updated() {
         if (!this.isMenuVisible) {
             this.gridCount = document.querySelector(".grid-container").children.length;
-        }
 
-        if (this.gridCount === this.sequenceStack.length) {
 
-            if (this.isCorrectSequence) {
-                alert('the sequence is right mlem');
-                this.clearTimer()
-            }
-            else {
-                this.currentLife--;
-                console.log(this.currentLife)
-                if (this.currentLife === 0) {
-                    alert('bro are you that dumb?')
+            if (this.gridCount === this.sequenceStack.length) {
+
+                if (this.isCorrectSequence) {
+                    // alert('the sequence is right mlem');
+                    this.$refs.successModal.$el.showModal()
                     this.clearTimer()
                 }
-                this.sequenceStack[this.sequenceStack.length - 1].click()
-                // this.sequenceStack.pop()
+                else {
+                    this.currentLife--;
+                    console.log(this.currentLife)
+                    if (this.currentLife === 0) {
+                        // alert('bro are you that dumb?')
+                        this.$refs.gameOverModal.$el.showModal()
+                        this.clearTimer()
+                    }
+                    this.sequenceStack[this.sequenceStack.length - 1].click()
+                    // this.sequenceStack.pop()
+                }
             }
+        }
+    },
+    computed: {
+        isValidSequence() {
+            return this.sequence.length >= 2 && this.sequence.length <= 8;
+        }
+    },
+    mounted() {
+        if (this.sequence.length >= 2 && this.sequence.length <= 8) {
+            this.generateValidSequence();
         }
     }
 }
@@ -226,6 +300,10 @@ html {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
+}
+
+body {
+    overflow: hidden;
 }
 
 #topic-menu {
@@ -259,12 +337,14 @@ html {
     display: flex;
     flex-direction: row;
     justify-content: space-evenly;
+    flex-wrap: wrap;
 }
 
 .game-section {
     width: 100vw;
     height: 100vh;
     padding: 30px 50px;
+    background-position: center;
 }
 
 .game-details {
@@ -358,6 +438,100 @@ html {
     background: -webkit-linear-gradient(90deg, #525252 5%, #1E63E9 53%);
     -webkit-background-clip: text;
     -webkit-text-stroke: 10px transparent;
+}
+
+#custom-game {
+    background-image: url('https://images3.alphacoders.com/918/918325.jpg');
+    background-size: cover;
+    background-repeat: no-repeat;
+}
+
+@media only screen and (max-width: 1440px) {
+    #topic-menu h1 {
+        font-size: 100px;
+    }
+}
+
+@media only screen and (max-width: 1024px) {
+    .grid-container {
+        width: 90%;
+    }
+}
+
+@media only screen and (max-width: 768px) {
+
+    #topic-menu h1 {
+        font-size: 80px;
+        margin-bottom: 0px;
+    }
+
+    .topic-options-container {
+        padding: 10px;
+    }
+
+    .game-title {
+        font-size: 4rem;
+    }
+
+    .game-details h1 {
+        font-size: 40px;
+    }
+
+    .grid-container {
+        width: 80%;
+    }
+}
+
+@media only screen and (max-width: 425px) {
+
+    #topic-menu h1 {
+        font-size: 50px;
+        margin-bottom: 0px;
+    }
+
+    .topic-options-container {
+        height: 75vh !important;
+        overflow: scroll;
+    }
+
+    .game-section {
+        padding: 20px;
+    }
+
+    .game-title {
+        font-size: 2rem;
+    }
+
+    .game-details {
+        align-items: center;
+    }
+
+    .game-details h1 {
+        font-size: 20px;
+    }
+
+    .life-container {
+        height: 100%;
+        width: 150px;
+    }
+
+    .life-container i {
+        font-size: 25px;
+    }
+
+    .grid-container {
+        width: 100%;
+        margin: 0px !important;
+    }
+}
+
+@media only screen and (max-width: 375px) {
+
+    #topic-menu h1 {
+        font-size: 40px;
+        margin-bottom: 0px;
+    }
+
 }
 </style>
   
