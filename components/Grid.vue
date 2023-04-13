@@ -40,6 +40,7 @@ export default {
     height: 200px;
     background: linear-gradient(180deg, #1E63E9 0%, #1E1E1E 100%);
     box-shadow: 0px 0px 4px 12px rgba(0, 0, 0, 0.25);
+    margin-bottom: 30px;
     border-radius: 50px;
     display: flex;
     justify-content: center;
@@ -99,6 +100,7 @@ export default {
     .grid {
         width: 190px;
         height: 190px;
+        margin-bottom: 20px;
     }
 }
 
@@ -106,6 +108,7 @@ export default {
     .grid {
         width: 170px;
         height: 170px;
+        margin-bottom: 10px;
         border-radius: 25px;
     }
 
@@ -137,6 +140,7 @@ export default {
     .grid {
         width: 100px;
         height: 100px;
+        margin-bottom: 10px;
     }
 }
 </style>

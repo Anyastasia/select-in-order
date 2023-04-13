@@ -27,7 +27,7 @@
                     <i v-if="currentLife === 3" class="bi bi-heart-fill"></i>
                     <i v-else class="bi bi-heartbreak"></i>
                 </div>
-                <h1>Timer: {{ timerCount }}</h1>
+                <h1>Timer: {{ timerIsoString }}</h1>
             </div>
             <h1 class="game-title">{{ activeGameTitle }}</h1>
             <div class="grid-container">
@@ -48,7 +48,7 @@
                     <i v-if="currentLife === 3" class="bi bi-heart-fill"></i>
                     <i v-else class="bi bi-heartbreak"></i>
                 </div>
-                <h1>Timer: {{ timerCount }}</h1>
+                <h1>Timer: {{ timerIsoString }}</h1>
             </div>
             <h1 class="game-title">{{ activeGameTitle }}</h1>
             <div class="grid-container">
@@ -69,7 +69,7 @@
                     <i v-if="currentLife === 3" class="bi bi-heart-fill"></i>
                     <i v-else class="bi bi-heartbreak"></i>
                 </div>
-                <h1>Timer: {{ timerCount }}</h1>
+                <h1>Timer: {{ timerIsoString }}</h1>
             </div>
             <h1 class="game-title">{{ activeGameTitle }}</h1>
             <div class="grid-container">
@@ -282,6 +282,11 @@ export default {
     computed: {
         isValidSequence() {
             return this.sequence.length >= 2 && this.sequence.length <= 8;
+        },
+        timerIsoString() {
+            const date = new Date(0);
+            date.setSeconds(this.timerCount);
+            return date.toISOString().substring(17, 19);
         }
     },
     mounted() {
@@ -403,8 +408,8 @@ body {
 }
 
 .grid-container {
-    width: 60vw;
-    height: 60vh;
+    width: 50vw;
+    height: auto;
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
@@ -446,9 +451,39 @@ body {
     background-repeat: no-repeat;
 }
 
+#custom-game h1 {
+    text-shadow: 0px 4px 4px rgba(42, 39, 230, 0.25);
+    background: -webkit-linear-gradient(90deg, #525252 5%, #1E63E9 53%);
+    -webkit-background-clip: text;
+    -webkit-text-stroke: 10px transparent;
+}
+
+.bi-heartbreak {
+    animation: shake 0.5s;
+}
+
+@keyframes shake {
+  0% { transform: translate(1px, 1px) rotate(0deg); }
+  10% { transform: translate(-1px, -2px) rotate(-1deg); }
+  20% { transform: translate(-3px, 0px) rotate(1deg); }
+  30% { transform: translate(3px, 2px) rotate(0deg); }
+  40% { transform: translate(1px, -1px) rotate(1deg); }
+  50% { transform: translate(-1px, 2px) rotate(-1deg); }
+  60% { transform: translate(-3px, 1px) rotate(0deg); }
+  70% { transform: translate(3px, 1px) rotate(-1deg); }
+  80% { transform: translate(-1px, -1px) rotate(1deg); }
+  90% { transform: translate(1px, 2px) rotate(0deg); }
+  100% { transform: translate(1px, -2px) rotate(-1deg); }
+}
+
+
 @media only screen and (max-width: 1440px) {
     #topic-menu h1 {
         font-size: 100px;
+    }
+
+    .grid-container {
+        width: 60vw;
     }
 }
 
@@ -479,6 +514,7 @@ body {
 
     .grid-container {
         width: 80%;
+        /* height: 40vh; */
     }
 }
 
@@ -521,6 +557,7 @@ body {
 
     .grid-container {
         width: 100%;
+        /* height: 55vh; */
         margin: 0px !important;
     }
 }
@@ -531,6 +568,10 @@ body {
         font-size: 40px;
         margin-bottom: 0px;
     }
+
+    /* .grid-container {
+        height: 50vh;
+    } */
 
 }
 </style>
